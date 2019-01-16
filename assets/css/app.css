@@ -1,0 +1,517 @@
+/* Background */
+.background {
+  background-color: #f2f2f2 !important;
+
+}
+
+.callout {
+  border-style: none;
+}
+
+.main {
+  margin-top: 2%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Foundation's Nav Bar non sticky */
+.menu-hover-lines {
+
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 1px;
+  transition: all 0.35s ease;
+}
+
+.menu-hover-lines li a {
+  padding: 0.75rem 0;
+  color: rgba(10, 10, 10, 0.5);
+  position: relative;
+  margin-left: 1rem;
+}
+
+.menu-hover-lines li:first-child a {
+  margin-left: 0;
+}
+
+.menu-hover-lines li.active>a {
+  background-color: transparent;
+}
+
+.menu-hover-lines a:before,
+.menu-hover-lines a::after {
+  height: 4px;
+  position: absolute;
+  content: '';
+  transition: all 0.35s ease;
+  background-color: black;
+  width: 0;
+}
+
+.menu-hover-lines a::before {
+  top: 0;
+  left: 0;
+}
+
+.menu-hover-lines a::after {
+  bottom: 0;
+  right: 0;
+}
+
+.menu-hover-lines a:hover,
+.menu-hover-lines li.active>a {
+  color: #0a0a0a;
+  transition: all 0.35s ease;
+}
+
+.menu-hover-lines a:hover::before,
+.menu-hover-lines .active a::before,
+.menu-hover-lines a:hover::after,
+.menu-hover-lines .active a::after {
+  width: 100%;
+}
+
+/* Logo and header */
+.logoPhoto {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20%;
+}
+
+
+.header {
+  background-color: #fa5036;
+  padding-top: .5%;
+  padding-bottom: .5%;
+  margin: 0%;
+  width: 100%;
+}
+
+/* Our Nav Bar */
+.nav-bar {
+  background-color: white;
+  padding-top: .5%;
+  padding-bottom: .5%;
+  padding-left: 10%;
+  -webkit-box-shadow: 0 8px 6px -6px #cdcdcd;
+  -moz-box-shadow: 0 8px 6px -6px #cdcdcd;
+  box-shadow: 0 8px 6px -6px #cdcdcd;
+}
+
+/* Trends Near You */
+.trends-box {
+  background-color: white;
+  margin-top: 5%;
+}
+
+#trends-title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bolder;
+  font-size: 16pt;
+}
+
+.refresh-view-all {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.refresh {
+  margin: 3px 5px 0px 10px;
+}
+
+.refresh-view-all a:link {
+  color: black;
+  font-size: 8pt;
+}
+
+.refresh-view-all a:hover {
+  color: gray;
+}
+
+.refresh-view-all a:visited {
+  color: rgb(160, 140, 140);
+}
+
+.refresh-view-all p {
+  font-size: 10pt;
+  margin: 0px 0px 0px 0px;
+
+}
+
+.view-all {
+  margin: 3px 0px 0px 5px;
+}
+
+.trends-links {
+  word-break: break-all;
+}
+
+.trend {
+  margin: 0 0 10px 0;
+  list-style-type: none;
+  font-style: italic;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bolder;
+  font-size: 12pt;
+  color: #fa5036 !important;
+}
+
+.trends-links a:link {
+  color: #fa5036 !important;
+}
+
+.trends-links a:hover {
+  color: black;
+}
+
+
+/* Tweets */
+.tweets {
+  background-color: white;
+
+}
+
+.results {
+  background-color: #E5E5E5;
+  text-align: center;
+  padding: 1%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  color: #fa5036;
+}
+
+/*Twitter Embedding */
+blockquote.twitter-tweet {
+  display: inline-block;
+  font-family: "Helvetica Neue", Roboto, "Segoe UI", Calibri, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 16px;
+  border-color: #eee #ddd #bbb;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  margin: 10px 5px;
+  padding: 0 16px 16px 16px;
+  max-width: 468px;
+}
+
+blockquote.twitter-tweet p {
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 20px;
+}
+
+blockquote.twitter-tweet a {
+  color: inherit;
+  font-weight: normal;
+  text-decoration: none;
+  outline: 0 none;
+}
+
+blockquote.twitter-tweet a:hover,
+blockquote.twitter-tweet a:focus {
+  text-decoration: underline;
+}
+
+
+
+/* Login Page */
+
+.login-box {
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.4);
+  background: #fefefe;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.login-box .or {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  display: inline-block;
+  min-width: 2.1em;
+  padding: 0.3em;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  text-align: center;
+  font-size: 1.275rem;
+  background: #cacaca;
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.4);
+}
+
+@media screen and (max-width: 39.9375em) {
+  .login-box .or {
+    top: 85%;
+  }
+}
+
+.login-box-title {
+  font-weight: 300;
+  font-size: 1.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.login-box-form-section,
+.login-box-social-section-inner {
+  padding: 2.5rem;
+}
+
+.login-box-social-section {
+  background: url("https://images.pexels.com/photos/179124/pexels-photo-179124.jpeg?w=1260&h=750&auto=compress&cs=tinysrgb");
+  background-size: cover;
+  background-position: center;
+}
+
+.login-box-input {
+  margin-bottom: 1.25rem;
+  height: 2rem;
+  border: 0;
+  padding-left: 0;
+  box-shadow: none;
+  border-bottom: 1px solid #1779ba;
+  font-weight: 400;
+}
+
+.login-box-input:focus {
+  color: #1779ba;
+  transition: 0.2s ease-in-out;
+  box-shadow: none;
+  border: 0;
+  border-bottom: 2px solid #1779ba;
+}
+
+.login-box-submit-button {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 1rem 0;
+  padding: 0.85em 1em;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  transition: background-color 0.25s ease-out, color 0.25s ease-out;
+  font-size: 0.9rem;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  background-color: #1779ba;
+  color: #fefefe;
+  display: block;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+  border-radius: 0;
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+[data-whatinput='mouse'] .login-box-submit-button {
+  outline: 0;
+}
+
+.login-box-submit-button:hover, .login-box-submit-button:focus {
+  background-color: #126195;
+  color: #fefefe;
+}
+
+.login-box-submit-button:hover,
+.login-box-submit-button:focus {
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.4);
+}
+
+.login-box-submit-button:active {
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.4);
+}
+
+.login-box-social-button-facebook {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 1rem 0;
+  padding: 0.85em 1em;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  transition: background-color 0.25s ease-out, color 0.25s ease-out;
+  font-size: 0.9rem;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  background-color: #3b5998;
+  color: #fefefe;
+  display: block;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+[data-whatinput='mouse'] .login-box-social-button-facebook {
+  outline: 0;
+}
+
+.login-box-social-button-facebook:hover, .login-box-social-button-facebook:focus {
+  background-color: #2f477a;
+  color: #fefefe;
+}
+
+.login-box-social-button-twitter {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 1rem 0;
+  padding: 0.85em 1em;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  transition: background-color 0.25s ease-out, color 0.25s ease-out;
+  font-size: 0.9rem;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  background-color: #55acee;
+  color: #fefefe;
+  display: block;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+[data-whatinput='mouse'] .login-box-social-button-twitter {
+  outline: 0;
+}
+
+.login-box-social-button-twitter:hover, .login-box-social-button-twitter:focus {
+  background-color: #1a8fe8;
+  color: #fefefe;
+}
+
+.login-box-social-button-google {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 1rem 0;
+  padding: 0.85em 1em;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  transition: background-color 0.25s ease-out, color 0.25s ease-out;
+  font-size: 0.9rem;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  background-color: #dd4b39;
+  color: #fefefe;
+  display: block;
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+}
+
+[data-whatinput='mouse'] .login-box-social-button-google {
+  outline: 0;
+}
+
+.login-box-social-button-google:hover, .login-box-social-button-google:focus {
+  background-color: #be3221;
+  color: #fefefe;
+}
+
+[class*="login-box-social-button-"]:hover,
+[class*="login-box-social-button-"]:focus {
+  box-shadow: 0 2px 4px rgba(10, 10, 10, 0.4);
+}
+
+.login-box-social-headline {
+  display: block;
+  margin-bottom: 2.5rem;
+  font-size: 1.875rem;
+  color: #fefefe;
+  text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Media queries */
+@media only screen and (min-width:768px) and (max-width:1269px) {
+  /* Any screen-width less than 1270px, and adapts accordingly */
+}
+
+@media only screen and (min-width:768px) and (max-width:959px) {
+
+  /* Ipad */
+  .nav-bar {
+    padding-left: 5%;
+  }
+}
+
+@media only screen and (min-width:0px) and (max-width:767px) {
+
+  /* Smartphones and other small screens */
+  .logoPhoto {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+  }
+}
+
+
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+
+  /* Anything less than 960px and at least the size of the Ipad screen */
+  .logoPhoto {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+
+  /* Here, rules for anything less than Ipads width, with the
+       advice to design for the smallest common width, 320px.
+       This is the majority of smarthphones. */
+  .nav-bar {
+    padding-left: 2%;
+  }
+
+  .logoPhoto {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+  }
+
+
+}
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+  /* This is for any screen less than Ipad's width and at least
+       480px. This covers a many large-screened smartphones. It
+       is declared after the above rule so it overrides the rules
+       meant for 320px. */
+}
