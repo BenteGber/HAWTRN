@@ -1,23 +1,6 @@
 
 const log = console.log;
 
-// Yahoo WOEID for Atlanta
-var queryLocation = '2357024';
-
-
-var twitterQueryURL = 'https://cors-anywhere.herokuapp.com/' + 'https://api.twitter.com/1.1/trends/place.json?id=2357024'
-//  + 'https://api.twitter.com/1.1/trends/place.json?id=' + queryLocation + "KVQPwF6rfmHriDZqkmRFStmxA";
-
-$(document).ready(function () {
-    $.ajax({
-        url: twitterQueryURL,
-        method: 'GET',
-    })
-        .then(function (response) {
-            log(response);
-        })
-});
-
 // Firebase Configuration
 
 
@@ -116,6 +99,7 @@ const addUser = (userId,userData) => {
     }    
 }
 
+
 // Filling in stars to add to favorites - still a work in progress....
 // $('[data-rating] .star').on('click', function() {
 //     var selectedCssClass = 'selected';
@@ -136,5 +120,153 @@ $(".uncheck").click(function(){
 });
 
 // Adding checked boxes to favorites array
+
+
+
+
+// $(document).ready(function () {
+//     $.ajax({
+//         url: twitterQueryURL,
+//         method: 'GET',
+//     })
+//         .then(function (response) {
+//             log(response);
+//         })
+// });
+
+$(document).ready(function () {
+    //if this doesnt work make sure the baseUrl includes cors-anywhere next time
+    let baseUrl = 'https://api.twitter.com/1.1/search/tweets.json';
+    let reqHeader = "OAuth ";
+    let randomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+
+    //Prepare signature
+    let signatureBase = "GET" + "&" + encodeURIComponent(baseUrl) + "&";
+    let oauthToken = hGlobal.token;
+    let consumerKey = hGlobal.secret;
+
+    let paramString = encodeURIComponent("include_entities") + "=" + encodeURIComponent("true") + "&";
+    paramString += encodeURIComponent("oauth_consumer_key") + "=" + encodeURIComponent("KVQPwF6rfmHriDZqkmRFStmxA") + "&";
+    paramString += encodeURIComponent("oauth_nonce") + "=" + encodeURIComponent(randomString) + "&";
+    paramString += encodeURIComponent("oauth_signature_method") + "=" + encodeURIComponent("HMAC-SHA1") + "&";
+    paramString += encodeURIComponent("oauth_timestamp") + "=" + encodeURIComponent(Date.now()) + "&";
+
+    //is this the OAuth token? This is what firebase passes back on succesful twitter authorization so assuming yes
+    paramString += encodeURIComponent("oauth_token") + "=" + encodeURIComponent("VVJqgYR1vseS4SKI2GiqtYh49m63") + "&";
+    paramString += encodeURIComponent("oauth_version") + "=" + encodeURIComponent("1.0") + "&";
+
+    //These are going to be hardcoded for now but we need to come up with a little logic to make this dynamic:
+    paramString += encodeURIComponent("q") + "=" + encodeURIComponent("trump");
+
+    //when paramString is done append it to the signature:
+    signatureBase += encodeURIComponent(paramString);
+
+    //create signing key
+    // let consumerKey = 'nDN4aM36VtZ0tM8YNqijhhyHl2AHfPOxZL5KWjx4dqMG8S4byR'; //(API Secret Key from dashboard)
+    // let oauthToken = 'VVJqgYR1vseS4SKI2GiqtYh49m63';
+
+    log("token____", hGlobal.token, "Secret*****", hGlobal.secret);
+
+    //if it doesn't work, try the below line of code without oauthToken but still leave the ampersand at the end:
+    let signingKey = encodeURIComponent(consumerKey) + "&" + encodeURIComponent(oauthToken);
+
+    let hash = CryptoJS.HmacSHA1(consumerKey, oauthToken);
+
+    let signature = hash.toString(CryptoJS.enc.Base64);
+
+    console.log("big effin signature: ", signatureBase);
+    console.log("omg please wooooork    ", signature);
+
+    reqHeader += encodeURIComponent("oauth_consumer_key") + "=" + "\"\"" + encodeURIComponent("value") + "\"\"" + ", ";
+    reqHeader += encodeURIComponent("oauth_nonce") + "=" + "\"\"" + encodeURIComponent(randomString) + "\"\"" + ", ";
+    reqHeader += encodeURIComponent("oauth_signature") + "=" + "\"\"" + encodeURIComponent(signature) + "\"\"" + ", ";
+    reqHeader += encodeURIComponent("oauth_signature_method") + "=" + "\"\"" + encodeURIComponent("HMAC-SHA1") + "\"\"" + ", ";
+    reqHeader += encodeURIComponent("oauth_timestamp") + "=" + "\"\"" + encodeURIComponent(Date.now()) + "\"\"" + ", ";
+    reqHeader += encodeURIComponent("oauth_token") + "=" + "\"\"" + encodeURIComponent(oauthToken) + "\"\"" + ", ";
+    reqHeader += encodeURIComponent("oauth_version") + "=" + "\"\"" + encodeURIComponent("1.0");
+
+    console.log("I'm freaking ouuuuut", reqHeader)
+    $.ajax({
+        url: `https://cors-anywhere.herokuapp.com/${baseUrl}`,
+        headers: {
+            "Authorization": reqHeader,
+        },
+        method: 'GET',
+    })
+        .then(function (response) {
+            console.log("RESPONSE!!!!!", response);
+        })
+        .catch((err) => {
+            console.log("ERROR! ERROR!", err);
+        });
+});
+
+
+
+// var lat = '';
+// var long = '';
+// var htmlGeo = lat + long;
+
+
+// function getLocation() {
+//     navigator.geolocation.getCurrentPosition(function (position) {
+//         lat = position.coords.latitude + "";
+//         long = position.coords.longitude + "";
+//         log(lat, long, htmlGeo)
+//     }, function (error) {
+//         switch (error.code) {
+//             case error.PERMISSION_DENIED:
+//                 alert("User denied the request for Geolocation.");
+//                 break;
+//             case error.POSITION_UNAVAILABLE:
+//                 alert("Location information is unavailable.")
+//                 break;
+//             case error.TIMEOUT:
+//                 alert("The request to get user location timed out.")
+//                 break;
+//             case error.UNKNOWN_ERROR:
+//                 alert("An unknown error occurred.")
+//                 break;
+//         };
+//     })
+
+// }
+// getLocation();
+
+// // Promise function for controlling state. 
+// function promiseFunc() {
+//     return new Promise(function (resolve, reject) {
+//         if (success) {
+//             resolve;
+//         }
+//         else {
+//             reject;
+//         }
+//     })
+// }
+
+// promiseFunc()
+//     .then(function (data) {
+//         log("Data", data)
+//     })
+//     .catch(function (error) {
+//         log("Error", error)
+//     });
+
+// // Yahoo WOEID for Atlanta for testing purposes
+// // let queryLocation = '2357024';
+
+// let tweetDataURL = 'https://api.twitter.com/1.1/search/tweets.json?q=' + trend + "&geocode=" + htmlGeo + radius;
+// // It is also possible to add a result type: Recent, Popular, Mixed   ex &result_type=recent  **mixed is default**
+
+// let yahooQueryURL = "https://yboss.yahooapis.com/geo/placefinder?location=" + htmlGeo;
+// let queryLocation = data.woeid.val();
+
+// var twitterQueryURL = 'https://cors-anywhere.herokuapp.com/' + 'https://api.twitter.com/1.1/trends/place.json?id=2357024'
+// //  + 'https://api.twitter.com/1.1/trends/place.json?id=' + queryLocation + "KVQPwF6rfmHriDZqkmRFStmxA";
+
+
+
 
 
