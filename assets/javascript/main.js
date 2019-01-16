@@ -238,7 +238,5 @@ $(document).ready(function () {
 // //  + 'https://api.twitter.com/1.1/trends/place.json?id=' + queryLocation + "KVQPwF6rfmHriDZqkmRFStmxA";
 
 
-// Firebase Configuration
-
 
 
