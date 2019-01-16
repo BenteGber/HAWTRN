@@ -1,6 +1,99 @@
 
 const log = console.log;
 
+const configFireBase = {
+    apiKey: "AIzaSyCDxL0zvea3jzl8N1lk9mPbahQ4Dlj0Aa4",
+    authDomain: "hawtrn-85a35.firebaseapp.com",
+    databaseURL: "https://hawtrn-85a35.firebaseio.com",
+    projectId: "hawtrn-85a35",
+    storageBucket: "hawtrn-85a35.appspot.com",
+    messagingSenderId: "1036899374376"
+};
+
+const hGlobal = new Object();
+
+// Initialize Firebase
+
+firebase.initializeApp(configFireBase);
+db = firebase.database();
+
+let usersRef = db.ref("/users")
+
+
+// Using a redirect.
+firebase.auth().getRedirectResult().then(function (result) {
+    if (result.credential) {
+        // For accessing the Twitter API.
+        hGlobal["token"] = result.credential.accessToken;
+        hGlobal["secret"] = result.credential.secret;
+    }
+    hGlobal["user"] = result.user;
+});
+
+// Start a sign in process for an unauthenticated user.
+var provider = new firebase.auth.TwitterAuthProvider();
+// firebase.auth().signInWithRedirect(provider);
+
+
+firebase.auth().onAuthStateChanged(function (user) {
+    if (hGlobal.user) {
+        // User is signed in.
+        let displayName = user.displayName;
+        let email = user.email;
+        let emailVerified = user.emailVerified;
+        let photoURL = user.photoURL;
+        let isAnonymous = user.isAnonymous;
+        let userId = user.uid;
+        hGlobal["userId"] = userId;
+        let providerData = user.providerData;
+        console.log(displayName);
+        console.log(user.uid);
+        const userData = {
+            name: displayName,
+            email: email,
+            photo: photoURL
+        }
+        addUser(userId, userData);
+        // ...
+    } else {
+        // User is signed out.
+        firebase.auth().signInWithRedirect(provider);
+        firebase.auth().getRedirectResult().then(function (result) {
+            if (result.credential) {
+                hGlobal["token"] = result.credential.accessToken;
+                hGlobal["secret"] = result.credential.secret;
+                hGlobal["user"] = result.user;
+            }
+        }).catch(function (error) {
+            let c = error.code;
+            let m = error.message;
+            let e = error.email;
+            let cr = error.credential;
+            console.log(c);
+            console.log(m);
+            console.log(e);
+            console.log(cr);
+        });
+    }
+});
+
+const userExists = (userId) => {
+    usersRef.child(userId).once("value", (snapshot => {
+        let exists = (snapshot.val() !== null);
+        return exists;
+    }))
+
+}
+
+const addUser = (userId, userData) => {
+    if (!userExists(userId)) {
+        db.ref(`/users/${userId}`).set(userData, (error) => {
+            (error ? console.log("Errors handled " + error) : console.log("User successfully added to the database. "));
+        });
+    }
+}
+
+
 
 // $(document).ready(function () {
 //     $.ajax({
@@ -148,95 +241,4 @@ $(document).ready(function () {
 // Firebase Configuration
 
 
-const configFireBase = {
-    apiKey: "AIzaSyCDxL0zvea3jzl8N1lk9mPbahQ4Dlj0Aa4",
-    authDomain: "hawtrn-85a35.firebaseapp.com",
-    databaseURL: "https://hawtrn-85a35.firebaseio.com",
-    projectId: "hawtrn-85a35",
-    storageBucket: "hawtrn-85a35.appspot.com",
-    messagingSenderId: "1036899374376"
-};
-
-const hGlobal = new Object();
-
-// Initialize Firebase
-
-firebase.initializeApp(configFireBase);
-db = firebase.database();
-
-let usersRef = db.ref("/users")
-
-
-// Using a redirect.
-firebase.auth().getRedirectResult().then(function (result) {
-    if (result.credential) {
-        // For accessing the Twitter API.
-        hGlobal["token"] = result.credential.accessToken;
-        hGlobal["secret"] = result.credential.secret;
-    }
-    hGlobal["user"] = result.user;
-});
-
-// Start a sign in process for an unauthenticated user.
-var provider = new firebase.auth.TwitterAuthProvider();
-// firebase.auth().signInWithRedirect(provider);
-
-
-firebase.auth().onAuthStateChanged(function (user) {
-    if (hGlobal.user) {
-        // User is signed in.
-        let displayName = user.displayName;
-        let email = user.email;
-        let emailVerified = user.emailVerified;
-        let photoURL = user.photoURL;
-        let isAnonymous = user.isAnonymous;
-        let userId = user.uid;
-        hGlobal["userId"] = userId;
-        let providerData = user.providerData;
-        console.log(displayName);
-        console.log(user.uid);
-        const userData = {
-            name: displayName,
-            email: email,
-            photo: photoURL
-        }
-        addUser(userId, userData);
-        // ...
-    } else {
-        // User is signed out.
-        firebase.auth().signInWithRedirect(provider);
-        firebase.auth().getRedirectResult().then(function (result) {
-            if (result.credential) {
-                hGlobal["token"] = result.credential.accessToken;
-                hGlobal["secret"] = result.credential.secret;
-                hGlobal["user"] = result.user;
-            }
-        }).catch(function (error) {
-            let c = error.code;
-            let m = error.message;
-            let e = error.email;
-            let cr = error.credential;
-            console.log(c);
-            console.log(m);
-            console.log(e);
-            console.log(cr);
-        });
-    }
-});
-
-const userExists = (userId) => {
-    usersRef.child(userId).once("value", (snapshot => {
-        let exists = (snapshot.val() !== null);
-        return exists;
-    }))
-
-}
-
-const addUser = (userId, userData) => {
-    if (!userExists(userId)) {
-        db.ref(`/users/${userId}`).set(userData, (error) => {
-            (error ? console.log("Errors handled " + error) : console.log("User successfully added to the database. "));
-        });
-    }
-}
 
