@@ -100,6 +100,28 @@ const addUser = (userId,userData) => {
 }
 
 
+// Filling in stars to add to favorites - still a work in progress....
+// $('[data-rating] .star').on('click', function() {
+//     var selectedCssClass = 'selected';
+//     var $this = $(this);
+//     $this.siblings('.' + selectedCssClass).removeClass(selectedCssClass);
+//     $this
+//       .addClass(selectedCssClass)
+//       .parent().addClass('is-voted');
+//   });
+  
+
+// We can use check boxes for now!!! Easier!!!
+  $(".check").click(function(){
+    $("#my-check").prop("checked", true);
+});
+$(".uncheck").click(function(){
+    $("#my-check").prop("checked", false);
+});
+
+// Adding checked boxes to favorites array
+
+
 
 
 // $(document).ready(function () {
@@ -243,6 +265,7 @@ $(document).ready(function () {
 
 // var twitterQueryURL = 'https://cors-anywhere.herokuapp.com/' + 'https://api.twitter.com/1.1/trends/place.json?id=2357024'
 // //  + 'https://api.twitter.com/1.1/trends/place.json?id=' + queryLocation + "KVQPwF6rfmHriDZqkmRFStmxA";
+
 
 
 
