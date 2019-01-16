@@ -11,7 +11,7 @@ const configFireBase = {
     projectId: "hawtrn-85a35",
     storageBucket: "hawtrn-85a35.appspot.com",
     messagingSenderId: "1036899374376"
-    };
+};
 
 const hGlobal = new Object();
 
@@ -19,24 +19,24 @@ const hGlobal = new Object();
 
 firebase.initializeApp(configFireBase);
 
-let db = firebase.database();    
+let db = firebase.database();
 let usersRef = db.ref("/users")
 
 // Using a redirect
-firebase.auth().getRedirectResult().then(function(result) {
+firebase.auth().getRedirectResult().then(function (result) {
     if (result.credential) {
-      
+
         // For accessing the Twitter API.
         hGlobal["token"] = result.credential.accessToken;
         hGlobal["secret"] = result.credential.secret;
     }
     hGlobal["user"] = result.user;
-  });
-  
+});
+
 // Start a sign in process for an unauthenticated user.
 let provider = new firebase.auth.TwitterAuthProvider();
 
-firebase.auth().onAuthStateChanged(function(user) {
+firebase.auth().onAuthStateChanged(function (user) {
     if (hGlobal.user) {
         // User is signed in
         hGlobal["displayName"] = user.displayName;
@@ -59,18 +59,18 @@ firebase.auth().onAuthStateChanged(function(user) {
                 joined: firebase.database.ServerValue.TIMESTAMP,
                 lastLogin: firebase.database.ServerValue.TIMESTAMP
             }
-            addUser(hGlobal.userId,userData);   
+            addUser(hGlobal.userId, userData);
         }
     } else {
-      // User is signed out
+        // User is signed out
         firebase.auth().signInWithRedirect(provider);
-        firebase.auth().getRedirectResult().then(function(result) {
+        firebase.auth().getRedirectResult().then(function (result) {
             if (result.credential) {
                 hGlobal["token"] = result.credential.accessToken;
                 hGlobal["secret"] = result.credential.secret;
-                hGlobal["user"]  = result.user;
+                hGlobal["user"] = result.user;
             }
-        }).catch(function(error) {
+        }).catch(function (error) {
             let c = error.code;
             let m = error.message;
             let e = error.email;
@@ -88,15 +88,15 @@ const userExists = (userId) => {
         let exists = (snapshot.val() !== null);
         return exists;
     }))
-    
-} 
 
-const addUser = (userId,userData) => {
-    if(!userExists(userId)) {   
+}
+
+const addUser = (userId, userData) => {
+    if (!userExists(userId)) {
         db.ref(`/users/${userId}`).set(userData, (error) => {
             (error ? console.log("Errors handled " + error) : console.log("User successfully added to the database. "));
         });
-    }    
+    }
 }
 
 
