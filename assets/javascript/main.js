@@ -116,3 +116,25 @@ const addUser = (userId,userData) => {
     }    
 }
 
+// Filling in stars to add to favorites - still a work in progress....
+// $('[data-rating] .star').on('click', function() {
+//     var selectedCssClass = 'selected';
+//     var $this = $(this);
+//     $this.siblings('.' + selectedCssClass).removeClass(selectedCssClass);
+//     $this
+//       .addClass(selectedCssClass)
+//       .parent().addClass('is-voted');
+//   });
+  
+
+// We can use check boxes for now!!! Easier!!!
+  $(".check").click(function(){
+    $("#my-check").prop("checked", true);
+});
+$(".uncheck").click(function(){
+    $("#my-check").prop("checked", false);
+});
+
+// Adding checked boxes to favorites array
+
+
