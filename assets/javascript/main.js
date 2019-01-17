@@ -11,7 +11,7 @@ const configFireBase = {
     projectId: "hawtrn-85a35",
     storageBucket: "hawtrn-85a35.appspot.com",
     messagingSenderId: "1036899374376"
-    };
+};
 
 const hGlobal = new Object();
 
@@ -19,24 +19,24 @@ const hGlobal = new Object();
 
 firebase.initializeApp(configFireBase);
 
-let db = firebase.database();    
+let db = firebase.database();
 let usersRef = db.ref("/users")
 
 // Using a redirect
-firebase.auth().getRedirectResult().then(function(result) {
+firebase.auth().getRedirectResult().then(function (result) {
     if (result.credential) {
-      
+
         // For accessing the Twitter API.
         hGlobal["token"] = result.credential.accessToken;
         hGlobal["secret"] = result.credential.secret;
     }
     hGlobal["user"] = result.user;
-  });
-  
+});
+
 // Start a sign in process for an unauthenticated user.
 let provider = new firebase.auth.TwitterAuthProvider();
 
-firebase.auth().onAuthStateChanged(function(user) {
+firebase.auth().onAuthStateChanged(function (user) {
     if (hGlobal.user) {
         // User is signed in
         hGlobal["displayName"] = user.displayName;
@@ -59,18 +59,18 @@ firebase.auth().onAuthStateChanged(function(user) {
                 joined: firebase.database.ServerValue.TIMESTAMP,
                 lastLogin: firebase.database.ServerValue.TIMESTAMP
             }
-            addUser(hGlobal.userId,userData);   
+            addUser(hGlobal.userId, userData);
         }
     } else {
-      // User is signed out
+        // User is signed out
         firebase.auth().signInWithRedirect(provider);
-        firebase.auth().getRedirectResult().then(function(result) {
+        firebase.auth().getRedirectResult().then(function (result) {
             if (result.credential) {
                 hGlobal["token"] = result.credential.accessToken;
                 hGlobal["secret"] = result.credential.secret;
-                hGlobal["user"]  = result.user;
+                hGlobal["user"] = result.user;
             }
-        }).catch(function(error) {
+        }).catch(function (error) {
             let c = error.code;
             let m = error.message;
             let e = error.email;
@@ -88,110 +88,102 @@ const userExists = (userId) => {
         let exists = (snapshot.val() !== null);
         return exists;
     }))
-    
-} 
 
-const addUser = (userId,userData) => {
-    if(!userExists(userId)) {   
+}
+
+const addUser = (userId, userData) => {
+    if (!userExists(userId)) {
         db.ref(`/users/${userId}`).set(userData, (error) => {
             (error ? console.log("Errors handled " + error) : console.log("User successfully added to the database. "));
         });
-    }    
+    }
 }
 
 
 
-
-// $(document).ready(function () {
-//     $.ajax({
-//         url: twitterQueryURL,
-//         method: 'GET',
-//     })
-//         .then(function (response) {
-//             log(response);
-//         })
-// });
+function TweetCard(id, name, handle, profileImg, profileUrl, bodyText, likes, createdAt, retweetCount, tweetUrl) {
+    this.id = id;
+    this.name = name;
+    this.handle = handle;
+    this.profileImg = profileImg;
+    this.profileUrl = profileUrl;
+    this.bodyText = bodyText;
+    this.likes = likes;
+    this.createdAt = createdAt;
+    this.retweeCount = retweetCount;
+    this.tweetUrl = tweetUrl;
+    this.favorited = null;
+    this.addToFavorites = () => {
+        log(this.favorited);
+    }
+}
 
 $(document).ready(function () {
-    //if this doesnt work make sure the baseUrl includes cors-anywhere next time
-    let baseUrl = 'https://api.twitter.com/1.1/search/tweets.json';
-    let reqHeader = "OAuth ";
-    let randomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-
-    //Prepare signature
-    let signatureBase = "GET" + "&" + encodeURIComponent(baseUrl) + "&";
-    let oauthToken = hGlobal.token;
-    let consumerKey = hGlobal.secret;
-
-    let paramString = encodeURIComponent("include_entities") + "=" + encodeURIComponent("true") + "&";
-    paramString += encodeURIComponent("oauth_consumer_key") + "=" + encodeURIComponent("KVQPwF6rfmHriDZqkmRFStmxA") + "&";
-    paramString += encodeURIComponent("oauth_nonce") + "=" + encodeURIComponent(randomString) + "&";
-    paramString += encodeURIComponent("oauth_signature_method") + "=" + encodeURIComponent("HMAC-SHA1") + "&";
-    paramString += encodeURIComponent("oauth_timestamp") + "=" + encodeURIComponent(Date.now()) + "&";
-
-    //is this the OAuth token? This is what firebase passes back on succesful twitter authorization so assuming yes
-    paramString += encodeURIComponent("oauth_token") + "=" + encodeURIComponent("VVJqgYR1vseS4SKI2GiqtYh49m63") + "&";
-    paramString += encodeURIComponent("oauth_version") + "=" + encodeURIComponent("1.0") + "&";
-
-    //These are going to be hardcoded for now but we need to come up with a little logic to make this dynamic:
-    paramString += encodeURIComponent("q") + "=" + encodeURIComponent("trump");
-
-    //when paramString is done append it to the signature:
-    signatureBase += encodeURIComponent(paramString);
-
-    //create signing key
-    // let consumerKey = 'nDN4aM36VtZ0tM8YNqijhhyHl2AHfPOxZL5KWjx4dqMG8S4byR'; //(API Secret Key from dashboard)
-    // let oauthToken = 'VVJqgYR1vseS4SKI2GiqtYh49m63';
-
-    log("token____", hGlobal.token, "Secret*****", hGlobal.secret);
-
-    //if it doesn't work, try the below line of code without oauthToken but still leave the ampersand at the end:
-    let signingKey = encodeURIComponent(consumerKey) + "&" + encodeURIComponent(oauthToken);
-
-    let hash = CryptoJS.HmacSHA1(consumerKey, oauthToken);
-
-    let signature = hash.toString(CryptoJS.enc.Base64);
-
-    console.log("big effin signature: ", signatureBase);
-    console.log("omg please wooooork    ", signature);
-
-    reqHeader += encodeURIComponent("oauth_consumer_key") + "=" + "\"\"" + encodeURIComponent("value") + "\"\"" + ", ";
-    reqHeader += encodeURIComponent("oauth_nonce") + "=" + "\"\"" + encodeURIComponent(randomString) + "\"\"" + ", ";
-    reqHeader += encodeURIComponent("oauth_signature") + "=" + "\"\"" + encodeURIComponent(signature) + "\"\"" + ", ";
-    reqHeader += encodeURIComponent("oauth_signature_method") + "=" + "\"\"" + encodeURIComponent("HMAC-SHA1") + "\"\"" + ", ";
-    reqHeader += encodeURIComponent("oauth_timestamp") + "=" + "\"\"" + encodeURIComponent(Date.now()) + "\"\"" + ", ";
-    reqHeader += encodeURIComponent("oauth_token") + "=" + "\"\"" + encodeURIComponent(oauthToken) + "\"\"" + ", ";
-    reqHeader += encodeURIComponent("oauth_version") + "=" + "\"\"" + encodeURIComponent("1.0");
-
-    console.log("I'm freaking ouuuuut", reqHeader)
     $.ajax({
-        url: `https://cors-anywhere.herokuapp.com/${baseUrl}`,
-        headers: {
-            "Authorization": reqHeader,
-        },
-        method: 'GET',
+        url: 'https://gt-example-teets.herokuapp.com/twitter/api',
+        method: 'POST',
+        data: {
+            path: '/search/tweets',
+            q: 'America',
+            geocode: '37.781157,-122.398720,5mi'
+        }
     })
-        .then(function (response) {
-            console.log("RESPONSE!!!!!", response);
-        })
-        .catch((err) => {
-            console.log("ERROR! ERROR!", err);
-        });
-});
+        .then(function (data) {
+            console.log('Data: ', data);
+            let tweets = data.statuses;
+            tweets.forEach(function (el, index) {
+                log("element------------", el, index)
+                window['card' + index] = new TweetCard(
+                    el.id,
+                    el.user.name,
+                    el.user.screen_name,
+                    el.user.profile_image_url,
+                    el.user.url,
+                    el.text,
+                    el.entities.favorite_count,
+                    // Need to trim this string down 
+                    el.created_at,
+                    el.retweet_count,
+                    el.source)
+                let tweetID = el.id;
+                let username = el.user.name.trim();
+                let screenname = el.user.screen_name;
+                let idString = el.id_str;
+                let text = el.text;
+                let embedUrl = 'https://twitter.com/' + username + '/statuses/' + idString + '?ref_src=twsrc%5Etfw';
+                embedUrl = embedUrl.replace(' ', '');
+                let tweetDate = el.created_at;
+                tweetDate = tweetDate.slice(0, 20);
+
+                $('.tweet-area').append(`
+                <blockquote class="twitter-tweet" data-lang="en">
+                // <p lang="en"dir="ltr"> ${ text}</p>&mdash; 
+                ${username} 
+                (@${screenname}) <a id ="${tweetID}"href="${embedUrl}"> ${tweetDate}</a ></blockquote>
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>`)
+
+            });
+        }
+        )
+})
 
 
 
+
+
+
+// let hasLocation = getLocation()
 // var lat = '';
 // var long = '';
-// var htmlGeo = lat + long;
+
 
 
 // function getLocation() {
 //     navigator.geolocation.getCurrentPosition(function (position) {
 //         lat = position.coords.latitude + "";
 //         long = position.coords.longitude + "";
-//         log(lat, long, htmlGeo)
+//         log(lat, long, "COORDINATES")
+//         return true;
 //     }, function (error) {
 //         switch (error.code) {
 //             case error.PERMISSION_DENIED:
@@ -207,24 +199,34 @@ $(document).ready(function () {
 //                 alert("An unknown error occurred.")
 //                 break;
 //         };
+//         return false;
 //     })
 
 // }
-// getLocation();
 
-// // Promise function for controlling state. 
-// function promiseFunc() {
-//     return new Promise(function (resolve, reject) {
-//         if (success) {
-//             resolve;
-//         }
-//         else {
-//             reject;
-//         }
-//     })
-// }
+
+// Promise function for controlling state. 
+
+// let promise1 = new Promise((resolve, reject) => {
+
+//     if (hasLocation) {
+//         resolve(success)
+
+//     }
+//     else {
+//         reject(error);
+//     }
+// })
+// promise1.then(() => {
+
+// })
+
 
 // promiseFunc()
+
+
+
+
 //     .then(function (data) {
 //         log("Data", data)
 //     })
