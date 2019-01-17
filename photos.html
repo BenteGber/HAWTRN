@@ -29,9 +29,13 @@
           <li><a href="latest.html">Latest</a></li>
           <li class="active"><a href="photos.html">Photos</a></li>
           <li><a href="videos.html">Videos</a></li>
-          <li><input id="hawt-search" type="text" placeholder="Search...">
-            <button>Submit</button></li>
+          <li><a href="favorites.html">#FAVS</a></li>
         </ul>
+        <ul class="menu" style="float: right; margin-top: -41px; padding-right: 175px">
+          <li><input id="hawt-search" type="text" placeholder="Search..."></li>
+          <li><button id="search-button">Search</button></li>
+        </ul>
+
         <!-- <ul class="menu menu-hover-lines" style="float:right;margin-top:-41px;padding-right:175px">
           <li><a href="login.html">Login</a></li>
         </ul> -->
@@ -60,18 +64,50 @@
             </div>
 
             <ul class="trends-links">
-              <li class="trend"><a href="#Trend">#Its2019andWeStillCant</a></li>
-              <li class="trend"><a href="#Trend">#TheBachelor</a></li>
-              <li class="trend"><a href="#Trend">#SaturdayMorning</a></li>
-              <li class="trend"><a href="#Trend">#Caturday</a></li>
-              <li class="trend"><a href="#Trend">#SaturdayThoughts</a></li>
-              <li class="trend"><a href="#Trend">#FridayFeeling</a></li>
-              <li class="trend"><a href="#Trend">#Pets</a></li>
-              <li class="trend"><a href="#Trend">#Giveaway</a></li>
+              <li class="trend"><a href="#">#Its2019andWeStillCant</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
+              <li class="trend"><a href="#">#TheBachelor</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
+              <li class="trend"><a href="#">#SaturdayMorning</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
+              <li class="trend"><a href="#">#Caturday</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
+              <li class="trend"><a href="#">#SaturdayThoughts</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
+              <li class="trend"><a href="#">#FridayFeeling</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
+              <li class="trend"><a href="#">#Pets</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
+              <li class="trend"><a href="#">#Giveaway</a>
+                <input type="checkbox" id="my-check">
+                <button type="button" class="check"></button>
+                <button type="button" class="uncheck"></button>
+              </li>
             </ul>
           </div>
         </div>
-
+        
         <!-- Tweets Area -->
 
         <div class="large-5 medium-5 cell">
@@ -100,6 +136,20 @@
       </div>
     </div>
 
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase.js"></script>
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+
+
+
+    <!-- JavaScript -->
+    <script src="assets/javascript/main.js"></script>
+
+
+    <!-- Foundation scripts-->
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script src="assets/js/vendor/jquery.js"></script>
     <script src="assets/js/vendor/what-input.js"></script>

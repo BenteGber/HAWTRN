@@ -13,7 +13,6 @@
 <body>
     <div class="background">
 
-
         <!-- Header -->
         <div class="container">
             <div class="header">
@@ -29,9 +28,13 @@
                     <li><a href="latest.html">Latest</a></li>
                     <li><a href="photos.html">Photos</a></li>
                     <li><a href="videos.html">Videos</a></li>
-                    <li><input id="hawt-search" type="text" placeholder="Search...">
-                        <button>Submit</button></li>
+                    <li><a href="favorites.html">#FAVS</a></li>
                 </ul>
+                <ul class="menu" style="float: right; margin-top: -41px; padding-right: 175px">
+                    <li><input id="hawt-search" type="text" placeholder="Search..."></li>
+                    <li><button id="search-button">Search</button></li>
+                </ul>
+
                 <!-- <ul class="menu menu-hover-lines" style="float:right;margin-top:-41px;padding-right:175px">
           <li><a href="login.html">Login</a></li>
         </ul> -->
@@ -60,14 +63,46 @@
                         </div>
 
                         <ul class="trends-links">
-                            <li class="trend"><a href="#Trend">#Its2019andWeStillCant</a></li>
-                            <li class="trend"><a href="#Trend">#TheBachelor</a></li>
-                            <li class="trend"><a href="#Trend">#SaturdayMorning</a></li>
-                            <li class="trend"><a href="#Trend">#Caturday</a></li>
-                            <li class="trend"><a href="#Trend">#SaturdayThoughts</a></li>
-                            <li class="trend"><a href="#Trend">#FridayFeeling</a></li>
-                            <li class="trend"><a href="#Trend">#Pets</a></li>
-                            <li class="trend"><a href="#Trend">#Giveaway</a></li>
+                            <li class="trend"><a href="#">#Its2019andWeStillCant</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
+                            <li class="trend"><a href="#">#TheBachelor</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
+                            <li class="trend"><a href="#">#SaturdayMorning</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
+                            <li class="trend"><a href="#">#Caturday</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
+                            <li class="trend"><a href="#">#SaturdayThoughts</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
+                            <li class="trend"><a href="#">#FridayFeeling</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
+                            <li class="trend"><a href="#">#Pets</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
+                            <li class="trend"><a href="#">#Giveaway</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -92,7 +127,7 @@
                             <blockquote class="twitter-tweet" data-lang="en">
                                 <p lang="en" dir="ltr">take a shot for every 10 year challenge post on ur feed</p>&mdash;
                                 Mama Dragun
-                                (@NikitaDragun) <a href="https://twitter.com/Noahpinion/status/1085704828284620800?ref_src=twsrc%5Etfw">January
+                                (@NikitaDragun) <a href="https://twitter.com/NikitaDragun/status/1084914196448391170?ref_src=twsrc%5Etfw">January
                                     14, 2019</a>
                             </blockquote>
                             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -100,7 +135,7 @@
                             <blockquote class="twitter-tweet" data-lang="en">
                                 <p lang="en" dir="ltr">No thx <a href="https://t.co/VnBqJ3JoxG">https://t.co/VnBqJ3JoxG</a></p>&mdash;
                                 Penn
-                                Badgley (@PennBadgley) <a href="https://twitter.com/PennBadgley/status/1083083747111649280">January
+                                Badgley (@PennBadgley) <a href="https://twitter.com/PennBadgley/status/1083083747111649280?ref_src=twsrc%5Etfw">January
                                     9, 2019</a>
                             </blockquote>
                             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -109,8 +144,6 @@
                 </div>
             </div>
         </div>
-
-
 
 
         <!-- Firebase -->
@@ -128,6 +161,5 @@
         <script src="assets/javascript/app.js"></script>
         <script src="assets/javascript/main.js"></script>
 </body>
-
 
 </html>

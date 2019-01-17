@@ -100,6 +100,28 @@ const addUser = (userId, userData) => {
 }
 
 
+// Filling in stars to add to favorites - still a work in progress....
+// $('[data-rating] .star').on('click', function() {
+//     var selectedCssClass = 'selected';
+//     var $this = $(this);
+//     $this.siblings('.' + selectedCssClass).removeClass(selectedCssClass);
+//     $this
+//       .addClass(selectedCssClass)
+//       .parent().addClass('is-voted');
+//   });
+
+
+// We can use check boxes for now!!! Easier!!!
+$(".check").click(function () {
+    $("#my-check").prop("checked", true);
+});
+$(".uncheck").click(function () {
+    $("#my-check").prop("checked", false);
+});
+
+// Adding checked boxes to favorites array
+
+
 
 function TweetCard(id, name, handle, profileImg, profileUrl, bodyText, likes, createdAt, retweetCount, tweetUrl) {
     this.id = id;
@@ -147,11 +169,13 @@ $(document).ready(function () {
                     el.source)
                 let tweetID = el.id;
                 let username = el.user.name.trim();
+                let userId = el.user.id_str;
                 let screenname = el.user.screen_name;
                 let idString = el.id_str;
                 let text = el.text;
-                let embedUrl = 'https://twitter.com/' + username + '/statuses/' + idString + '?ref_src=twsrc%5Etfw';
+                let embedUrl = 'https://twitter.com/' + userId + '/statuses/' + idString + '?ref_src=twsrc%5Etfw';
                 embedUrl = embedUrl.replace(' ', '');
+                log(embedUrl);
                 let tweetDate = el.created_at;
                 tweetDate = tweetDate.slice(0, 20);
 
@@ -245,6 +269,7 @@ $(document).ready(function () {
 
 // var twitterQueryURL = 'https://cors-anywhere.herokuapp.com/' + 'https://api.twitter.com/1.1/trends/place.json?id=2357024'
 // //  + 'https://api.twitter.com/1.1/trends/place.json?id=' + queryLocation + "KVQPwF6rfmHriDZqkmRFStmxA";
+
 
 
 
