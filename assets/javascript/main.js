@@ -99,6 +99,54 @@ const addUser = (userId, userData) => {
     }
 }
 
+//  Functions to add the favorites to Firebase
+
+const favs = {
+    addTweet(userId,tweet) {
+        let fType = "Tweet";
+        let tweetId = $(tweet).attr("data-tweetId");
+        let tweetURL = $(tweetId).attr("href");
+        let tweetURL = tweet.attr$("href");
+
+        const fData = {
+            "url": tweetURL
+        }
+
+        addFav(userId,fType,fData);
+    },
+
+    addTrend(userId,trend) {
+        let fType = "Trend";
+        let trendInfo = trend; //fridgeMagnet.text($(this).attr("data-letter"));
+
+        const fData = {
+            "name": $(trendInfo).attr("data-name"),
+            "url": $(trendInfo).attr("data-url"),
+            "promoted_content": $(trendInfo).attr("data-promoted_content"),
+            "query": $(trendInfo).attr("data-query"),
+            "tweet_volume": $(trendInfo).attr("tweet_volume")
+        }
+
+        addFav(userId,fType,fData);
+    },
+
+    addFav(userId,fType,fData) {
+        db.ref(`/fav${fType}/${userId}`).set(favData, (error) => {
+            (error ? console.log("Errors handled " + error) : console.log("Favorite successfully added to the database. "));
+        });       
+    },
+
+    deleteFav() {
+
+    },
+
+    getFavTweets() {
+        favs = db.ref(`/favTweet/${userId}`).once('value').then((ss) => {
+            let tweetURL = ss.val().url;
+            console.log("----url----",tweetURL)
+        });
+    }
+}
 
 // Filling in stars to add to favorites - still a work in progress....
 // $('[data-rating] .star').on('click', function() {
@@ -111,9 +159,10 @@ const addUser = (userId, userData) => {
 //   });
 
 
-// We can use check boxes for now!!! Easier!!!
+// We can use check boxes for now!!! Easier!!! 
 $(".check").click(function () {
     $("#my-check").prop("checked", true);
+    addTrend(userId,$(this));
 });
 $(".uncheck").click(function () {
     $("#my-check").prop("checked", false);
@@ -181,10 +230,21 @@ function getTweets() {
             });
         }
         )
+
 }
 $(document).ready(function () {
     getTweets();
 });
+
+
+        $(".favThis").on("click", function() {
+            favs.addTweet(userId,this);
+        });
+})
+
+
+
+
 
 
 
