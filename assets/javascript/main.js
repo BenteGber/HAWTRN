@@ -102,7 +102,7 @@ const addUser = (userId, userData) => {
 //  Functions to add the favorites to Firebase
 
 const favs = {
-    addTweet(userId,tweet) {
+    addTweet(userId, tweet) {
         let fType = "Tweet";
         let tweetId = $(tweet).attr("data-tweetId");
         let tweetURL = $(tweetId).attr("href");
@@ -112,10 +112,10 @@ const favs = {
             "url": tweetURL
         }
 
-        addFav(userId,fType,fData);
+        addFav(userId, fType, fData);
     },
 
-    addTrend(userId,trend) {
+    addTrend(userId, trend) {
         let fType = "Trend";
         let trendInfo = trend; //fridgeMagnet.text($(this).attr("data-letter"));
 
@@ -127,13 +127,13 @@ const favs = {
             "tweet_volume": $(trendInfo).attr("tweet_volume")
         }
 
-        addFav(userId,fType,fData);
+        addFav(userId, fType, fData);
     },
 
-    addFav(userId,fType,fData) {
+    addFav(userId, fType, fData) {
         db.ref(`/fav${fType}/${userId}`).set(favData, (error) => {
             (error ? console.log("Errors handled " + error) : console.log("Favorite successfully added to the database. "));
-        });       
+        });
     },
 
     deleteFav() {
@@ -143,7 +143,7 @@ const favs = {
     getFavTweets() {
         favs = db.ref(`/favTweet/${userId}`).once('value').then((ss) => {
             let tweetURL = ss.val().url;
-            console.log("----url----",tweetURL)
+            console.log("----url----", tweetURL)
         });
     }
 }
@@ -162,7 +162,7 @@ const favs = {
 // We can use check boxes for now!!! Easier!!! 
 $(".check").click(function () {
     $("#my-check").prop("checked", true);
-    addTrend(userId,$(this));
+    addTrend(userId, $(this));
 });
 $(".uncheck").click(function () {
     $("#my-check").prop("checked", false);
@@ -237,10 +237,10 @@ $(document).ready(function () {
 });
 
 
-        $(".favThis").on("click", function() {
-            favs.addTweet(userId,this);
-        });
-})
+$(".favThis").on("click", function () {
+    favs.addTweet(userId, this);
+});
+
 
 
 
