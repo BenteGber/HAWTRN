@@ -37,7 +37,7 @@ firebase.auth().getRedirectResult().then(function (result) {
 let provider = new firebase.auth.TwitterAuthProvider();
 
 firebase.auth().onAuthStateChanged(function (user) {
-    if (hGlobal.user) {
+    if (user) {
         // User is signed in
         hGlobal["displayName"] = user.displayName;
         hGlobal["photoURL"] = user.photoURL;
@@ -54,10 +54,10 @@ firebase.auth().onAuthStateChanged(function (user) {
         } else {
             // User doesn't exist, add them to the Firebase Users
             const userData = {
-                name: hGlobal.displayName,
-                photo: hGlobal.photoURL,
-                joined: firebase.database.ServerValue.TIMESTAMP,
-                lastLogin: firebase.database.ServerValue.TIMESTAMP
+                "name": hGlobal.displayName,
+                "photo": hGlobal.photoURL,
+                "joined": firebase.database.ServerValue.TIMESTAMP,
+                "lastLogin": firebase.database.ServerValue.TIMESTAMP
             }
             addUser(hGlobal.userId, userData);
         }
@@ -104,20 +104,20 @@ const addUser = (userId, userData) => {
 const favs = {
     addTweet(userId, tweet) {
         let fType = "Tweet";
-        let tweetId = $(tweet).attr("data-tweetId");
-        let tweetURL = $(tweetId).attr("href");
-        let tweetURL = tweet.attr$("href");
+        let tweetURL = $(tweet).attr("data-tweetURL");
 
         const fData = {
-            "url": tweetURL
+            "url": tweetURL,
+            "dateAdded": firebase.database.ServerValue.TIMESTAMP
         }
 
-        addFav(userId, fType, fData);
+        favs.addFav(userId, fType, fData);
     },
 
+    // Extra feature, this probably isn't going to make it into the MVP
     addTrend(userId, trend) {
         let fType = "Trend";
-        let trendInfo = trend; //fridgeMagnet.text($(this).attr("data-letter"));
+        let trendInfo = trend;
 
         const fData = {
             "name": $(trendInfo).attr("data-name"),
@@ -127,11 +127,11 @@ const favs = {
             "tweet_volume": $(trendInfo).attr("tweet_volume")
         }
 
-        addFav(userId, fType, fData);
+        favs.addFav(userId, fType, fData);
     },
 
     addFav(userId, fType, fData) {
-        db.ref(`/fav${fType}/${userId}`).set(favData, (error) => {
+        db.ref(`/fav${fType}/${userId}`).push(fData, (error) => {
             (error ? console.log("Errors handled " + error) : console.log("Favorite successfully added to the database. "));
         });
     },
@@ -141,9 +141,15 @@ const favs = {
     },
 
     getFavTweets() {
-        favs = db.ref(`/favTweet/${userId}`).once('value').then((ss) => {
-            let tweetURL = ss.val().url;
-            console.log("----url----", tweetURL)
+        let userId = hGlobal.userId;
+        db.ref(`/favTweet/${userId}`).once('value').then(function(ss)  {
+            ss.forEach((child) => {
+                console.log("--22--", child.key, child.val()); 
+                this.intVal.push(child.val());
+                console.log("intVal",this.intVal);
+            });
+            //let tweetURL = ss.val().url;
+            //console.log("----url----", ss.val())
         });
     }
 }
@@ -212,15 +218,17 @@ function getTweets() {
                 log(embedUrl);
                 let tweetDate = el.created_at;
                 tweetDate = tweetDate.slice(0, 20);
-                $('.tweet-area').append(`<div>
+                $('.tweet-area').append(`
                 <blockquote class="twitter-tweet" data-lang="en">
                 <button></button>
                 // <p lang="en"dir="ltr"> ${ text}</p>&mdash; 
                 ${username} 
                 (@${screenname}) <a id ="${tweetID}"href="${embedUrl}"> ${tweetDate}</a ></blockquote>
-                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
-                            <button class ="btn btn-primary favThis" data-tweetId="${idString}"> Fave it <button>
-                            </div>`)
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                            <div>
+                                <button class ="btn btn-primary favThis" data-tweetURL="${embedUrl}">Fave it</button>
+                            </div>`);
+
                 if (index > tweets.length - 2) {
                     log(latestTweet);
                     localStorage.latestTweet = idString;
@@ -232,13 +240,17 @@ function getTweets() {
         )
 
 }
+
 $(document).ready(function () {
     getTweets();
-});
 
+    // Set the event listener for the favorite button
+    window.setTimeout(() => {   // It would be nice to do this with a promise so that when getTweets is done the listner is added. But this works.
+        $(".favThis").on("click", function () {
+            favs.addTweet(hGlobal.userId, this);
+        });
+    }, 1000);    
 
-$(".favThis").on("click", function () {
-    favs.addTweet(userId, this);
 });
 
 
