@@ -172,50 +172,35 @@ $(".uncheck").click(function () {
 
 
 
-function TweetCard(id, name, handle, profileImg, profileUrl, bodyText, likes, createdAt, retweetCount, tweetUrl) {
-    this.id = id;
-    this.name = name;
-    this.handle = handle;
-    this.profileImg = profileImg;
-    this.profileUrl = profileUrl;
-    this.bodyText = bodyText;
-    this.likes = likes;
-    this.createdAt = createdAt;
-    this.retweeCount = retweetCount;
-    this.tweetUrl = tweetUrl;
-    this.favorited = null;
-    this.addToFavorites = () => {
-        log(this.favorited);
-    }
-}
 
-$(document).ready(function () {
+
+let latestTweet = localStorage.latestTweet;
+let queryTopic = "coding";
+let geocode = '37.781157,-122.398720,50mi';
+
+function getTweets() {
+    if (latestTweet == undefined) {
+        latestTweet = '';
+    }
     $.ajax({
         url: 'https://gt-example-teets.herokuapp.com/twitter/api',
         method: 'POST',
         data: {
             path: '/search/tweets',
-            q: 'America',
-            geocode: '37.781157,-122.398720,5mi'
+            q: queryTopic,
+            geocode: geocode,
+            since_id: latestTweet,
+
         }
     })
         .then(function (data) {
             console.log('Data: ', data);
             let tweets = data.statuses;
+            if (tweets.id > parseInt(latestTweet))
+                localStorage.latestTweet = '';
+            log("$##$#$#$#$#$#$#$#$", tweets.length);
             tweets.forEach(function (el, index) {
-                log("element------------", el, index)
-                window['card' + index] = new TweetCard(
-                    el.id,
-                    el.user.name,
-                    el.user.screen_name,
-                    el.user.profile_image_url,
-                    el.user.url,
-                    el.text,
-                    el.entities.favorite_count,
-                    // Need to trim this string down 
-                    el.created_at,
-                    el.retweet_count,
-                    el.source)
+                log("element------------", el, 'Index', index)
                 let tweetID = el.id;
                 let username = el.user.name.trim();
                 let userId = el.user.id_str;
@@ -227,17 +212,30 @@ $(document).ready(function () {
                 log(embedUrl);
                 let tweetDate = el.created_at;
                 tweetDate = tweetDate.slice(0, 20);
-
-                $('.tweet-area').append(`
+                $('.tweet-area').append(`<div>
                 <blockquote class="twitter-tweet" data-lang="en">
+                <button></button>
                 // <p lang="en"dir="ltr"> ${ text}</p>&mdash; 
                 ${username} 
                 (@${screenname}) <a id ="${tweetID}"href="${embedUrl}"> ${tweetDate}</a ></blockquote>
-                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>`)
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+                            <button class ="btn btn-primary favThis" data-tweetId="${idString}"> Fave it <button>
+                            </div>`)
+                if (index > tweets.length - 2) {
+                    log(latestTweet);
+                    localStorage.latestTweet = idString;
+
+                };
 
             });
         }
         )
+
+}
+$(document).ready(function () {
+    getTweets();
+});
+
 
         $(".favThis").on("click", function() {
             favs.addTweet(userId,this);
@@ -249,11 +247,12 @@ $(document).ready(function () {
 
 
 
+
+//****** */ Geolocation
+// ******/Still  working on this
 // let hasLocation = getLocation()
 // var lat = '';
 // var long = '';
-
-
 
 // function getLocation() {
 //     navigator.geolocation.getCurrentPosition(function (position) {
@@ -279,37 +278,22 @@ $(document).ready(function () {
 //         return false;
 //     })
 
-// }
-
-
-// Promise function for controlling state. 
-
+// // }
 // let promise1 = new Promise((resolve, reject) => {
+//     if (dataReceivedSuccessfully)
+//         resolve('Data Available!');
 
-//     if (hasLocation) {
-//         resolve(success)
+//     if (!dataReceivedSuccessfully)
+//         reject('Data Corrupted!');
+// });
 
-//     }
-//     else {
-//         reject(error);
-//     }
-// })
-// promise1.then(() => {
+// promise1
+//     .then(getTweets)
+// console.log('Success!')
 
-// })
-
-
-// promiseFunc()
-
-
-
-
-//     .then(function (data) {
-//         log("Data", data)
-//     })
 //     .catch(function (error) {
-//         log("Error", error)
-//     });
+//         console.log('Failed!');
+//     }
 
 // // Yahoo WOEID for Atlanta for testing purposes
 // // let queryLocation = '2357024';
@@ -320,8 +304,23 @@ $(document).ready(function () {
 // let yahooQueryURL = "https://yboss.yahooapis.com/geo/placefinder?location=" + htmlGeo;
 // let queryLocation = data.woeid.val();
 
-// var twitterQueryURL = 'https://cors-anywhere.herokuapp.com/' + 'https://api.twitter.com/1.1/trends/place.json?id=2357024'
-// //  + 'https://api.twitter.com/1.1/trends/place.json?id=' + queryLocation + "KVQPwF6rfmHriDZqkmRFStmxA";
+// Constructor for tweetcard objects
+// function TweetCard(id, name, handle, profileImg, profileUrl, bodyText, likes, createdAt, retweetCount, tweetUrl) {
+//     this.id = id;
+//     this.name = name;
+//     this.handle = handle;
+//     this.profileImg = profileImg;
+//     this.profileUrl = profileUrl;
+//     this.bodyText = bodyText;
+//     this.likes = likes;
+//     this.createdAt = createdAt;
+//     this.retweeCount = retweetCount;
+//     this.tweetUrl = tweetUrl;
+//     this.favorited = null;
+//     this.addToFavorites = () => {
+//         log(this.favorited);
+//     }
+// }
 
 
 
