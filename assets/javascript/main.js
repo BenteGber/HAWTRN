@@ -137,20 +137,17 @@ const favs = {
     },
 
     deleteFav() {
-
+        // Future option to delete favorites
     },
 
     getFavTweets() {
         let userId = hGlobal.userId;
-        db.ref(`/favTweet/${userId}`).once('value').then(function(ss)  {
-            ss.forEach((child) => {
-                console.log("--22--", child.key, child.val()); 
-                this.intVal.push(child.val());
-                console.log("intVal",this.intVal);
-            });
-            //let tweetURL = ss.val().url;
-            //console.log("----url----", ss.val())
+        let tweetLinks = [];
+        db.ref(`/favTweet/${userId}`).orderByChild("dateAdded").on("child_added", function(ss)  {
+            let sv = ss.val();
+            tweetLinks.push(sv.url);
         });
+    return tweetLinks;
     }
 }
 
