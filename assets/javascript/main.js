@@ -37,7 +37,7 @@ firebase.auth().getRedirectResult().then(function (result) {
 let provider = new firebase.auth.TwitterAuthProvider();
 
 firebase.auth().onAuthStateChanged(function (user) {
-    if (hGlobal.user) {
+    if (user) {
         // User is signed in
         hGlobal["displayName"] = user.displayName;
         hGlobal["photoURL"] = user.photoURL;
@@ -54,10 +54,10 @@ firebase.auth().onAuthStateChanged(function (user) {
         } else {
             // User doesn't exist, add them to the Firebase Users
             const userData = {
-                name: hGlobal.displayName,
-                photo: hGlobal.photoURL,
-                joined: firebase.database.ServerValue.TIMESTAMP,
-                lastLogin: firebase.database.ServerValue.TIMESTAMP
+                "name": hGlobal.displayName,
+                "photo": hGlobal.photoURL,
+                "joined": firebase.database.ServerValue.TIMESTAMP,
+                "lastLogin": firebase.database.ServerValue.TIMESTAMP
             }
             addUser(hGlobal.userId, userData);
         }
@@ -99,6 +99,60 @@ const addUser = (userId, userData) => {
     }
 }
 
+//  Functions to add the favorites to Firebase
+
+const favs = {
+    addTweet(userId, tweet) {
+        let fType = "Tweet";
+        let tweetURL = $(tweet).attr("data-tweetURL");
+
+        const fData = {
+            "url": tweetURL,
+            "dateAdded": firebase.database.ServerValue.TIMESTAMP
+        }
+
+        favs.addFav(userId, fType, fData);
+    },
+
+    // Extra feature, this probably isn't going to make it into the MVP
+    addTrend(userId, trend) {
+        let fType = "Trend";
+        let trendInfo = trend;
+
+        const fData = {
+            "name": $(trendInfo).attr("data-name"),
+            "url": $(trendInfo).attr("data-url"),
+            "promoted_content": $(trendInfo).attr("data-promoted_content"),
+            "query": $(trendInfo).attr("data-query"),
+            "tweet_volume": $(trendInfo).attr("tweet_volume")
+        }
+
+        favs.addFav(userId, fType, fData);
+    },
+
+    addFav(userId, fType, fData) {
+        db.ref(`/fav${fType}/${userId}`).push(fData, (error) => {
+            (error ? console.log("Errors handled " + error) : console.log("Favorite successfully added to the database. "));
+        });
+    },
+
+    deleteFav() {
+
+    },
+
+    getFavTweets() {
+        let userId = hGlobal.userId;
+        db.ref(`/favTweet/${userId}`).once('value').then(function(ss)  {
+            ss.forEach((child) => {
+                console.log("--22--", child.key, child.val()); 
+                this.intVal.push(child.val());
+                console.log("intVal",this.intVal);
+            });
+            //let tweetURL = ss.val().url;
+            //console.log("----url----", ss.val())
+        });
+    }
+}
 
 // Filling in stars to add to favorites - still a work in progress....
 // $('[data-rating] .star').on('click', function() {
@@ -111,9 +165,10 @@ const addUser = (userId, userData) => {
 //   });
 
 
-// We can use check boxes for now!!! Easier!!!
+// We can use check boxes for now!!! Easier!!! 
 $(".check").click(function () {
     $("#my-check").prop("checked", true);
+    addTrend(userId, $(this));
 });
 $(".uncheck").click(function () {
     $("#my-check").prop("checked", false);
@@ -123,50 +178,35 @@ $(".uncheck").click(function () {
 
 
 
-function TweetCard(id, name, handle, profileImg, profileUrl, bodyText, likes, createdAt, retweetCount, tweetUrl) {
-    this.id = id;
-    this.name = name;
-    this.handle = handle;
-    this.profileImg = profileImg;
-    this.profileUrl = profileUrl;
-    this.bodyText = bodyText;
-    this.likes = likes;
-    this.createdAt = createdAt;
-    this.retweeCount = retweetCount;
-    this.tweetUrl = tweetUrl;
-    this.favorited = null;
-    this.addToFavorites = () => {
-        log(this.favorited);
-    }
-}
 
-$(document).ready(function () {
+
+let latestTweet = localStorage.latestTweet;
+let queryTopic = "coding";
+let geocode = '37.781157,-122.398720,50mi';
+
+function getTweets() {
+    if (latestTweet == undefined) {
+        latestTweet = '';
+    }
     $.ajax({
         url: 'https://gt-example-teets.herokuapp.com/twitter/api',
         method: 'POST',
         data: {
             path: '/search/tweets',
-            q: 'America',
-            geocode: '37.781157,-122.398720,5mi'
+            q: queryTopic,
+            geocode: geocode,
+            since_id: latestTweet,
+
         }
     })
         .then(function (data) {
             console.log('Data: ', data);
             let tweets = data.statuses;
+            if (tweets.id > parseInt(latestTweet))
+                localStorage.latestTweet = '';
+            log("$##$#$#$#$#$#$#$#$", tweets.length);
             tweets.forEach(function (el, index) {
-                log("element------------", el, index)
-                window['card' + index] = new TweetCard(
-                    el.id,
-                    el.user.name,
-                    el.user.screen_name,
-                    el.user.profile_image_url,
-                    el.user.url,
-                    el.text,
-                    el.entities.favorite_count,
-                    // Need to trim this string down 
-                    el.created_at,
-                    el.retweet_count,
-                    el.source)
+                log("element------------", el, 'Index', index)
                 let tweetID = el.id;
                 let username = el.user.name.trim();
                 let userId = el.user.id_str;
@@ -178,28 +218,60 @@ $(document).ready(function () {
                 log(embedUrl);
                 let tweetDate = el.created_at;
                 tweetDate = tweetDate.slice(0, 20);
-
                 $('.tweet-area').append(`
                 <blockquote class="twitter-tweet" data-lang="en">
+                <button></button>
                 // <p lang="en"dir="ltr"> ${ text}</p>&mdash; 
                 ${username} 
                 (@${screenname}) <a id ="${tweetID}"href="${embedUrl}"> ${tweetDate}</a ></blockquote>
-                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>`)
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                            <div>
+                                <button class ="btn btn-primary favThis" data-tweetURL="${embedUrl}">Fave it</button>
+                            </div>`);
+
+                if (index > tweets.length - 2) {
+                    log(latestTweet);
+                    localStorage.latestTweet = idString;
+
+                };
 
             });
         }
         )
-})
+
+}
+
+$(document).ready(function () {
+    getTweets();
+
+    // Set the event listener for the favorite button
+    window.setTimeout(() => {   // It would be nice to do this with a promise so that when getTweets is done the listner is added. But this works.
+        $(".favThis").on("click", function () {
+            favs.addTweet(hGlobal.userId, this);
+        });
+    }, 1000);    
+
+});
+
+
+$(".hawt-search").click(function() {
+    let searchstring  = $(this).text("#search");
+    searchstring.focus(), trim(), replaceAll("+");
+    $("#searchBox").html($("input:search").val());
+  });
 
 
 
 
 
 
+//****** */ Geolocation
+// ******/Still  working on this
 // let hasLocation = getLocation()
 // var lat = '';
 // var long = '';
 
+<<<<<<< HEAD
 
 
 function getLocation() {
@@ -248,32 +320,48 @@ let promise1 = new Promise( (resolve, reject) => {
 
     
 
-// let promise1 = new Promise((resolve, reject) => {
-
-//     if (hasLocation) {
-//         resolve(success)
-
-//     }
-//     else {
-//         reject(error);
-//     }
-// })
-// promise1.then(() => {
-
-// })
-
-
-// promiseFunc()
-
-
-
-
-//     .then(function (data) {
-//         log("Data", data)
+=======
+// function getLocation() {
+//     navigator.geolocation.getCurrentPosition(function (position) {
+//         lat = position.coords.latitude + "";
+//         long = position.coords.longitude + "";
+//         log(lat, long, "COORDINATES")
+//         return true;
+//     }, function (error) {
+//         switch (error.code) {
+//             case error.PERMISSION_DENIED:
+//                 alert("User denied the request for Geolocation.");
+//                 break;
+//             case error.POSITION_UNAVAILABLE:
+//                 alert("Location information is unavailable.")
+//                 break;
+//             case error.TIMEOUT:
+//                 alert("The request to get user location timed out.")
+//                 break;
+//             case error.UNKNOWN_ERROR:
+//                 alert("An unknown error occurred.")
+//                 break;
+//         };
+//         return false;
 //     })
+
+// // }
+>>>>>>> 391a41b035f07e7a2ca643467ec6253a63f9ccdd
+// let promise1 = new Promise((resolve, reject) => {
+//     if (dataReceivedSuccessfully)
+//         resolve('Data Available!');
+
+//     if (!dataReceivedSuccessfully)
+//         reject('Data Corrupted!');
+// });
+
+// promise1
+//     .then(getTweets)
+// console.log('Success!')
+
 //     .catch(function (error) {
-//         log("Error", error)
-//     });
+//         console.log('Failed!');
+//     }
 
 // // Yahoo WOEID for Atlanta for testing purposes
 // // let queryLocation = '2357024';
@@ -284,8 +372,23 @@ let promise1 = new Promise( (resolve, reject) => {
 // let yahooQueryURL = "https://yboss.yahooapis.com/geo/placefinder?location=" + htmlGeo;
 // let queryLocation = data.woeid.val();
 
-// var twitterQueryURL = 'https://cors-anywhere.herokuapp.com/' + 'https://api.twitter.com/1.1/trends/place.json?id=2357024'
-// //  + 'https://api.twitter.com/1.1/trends/place.json?id=' + queryLocation + "KVQPwF6rfmHriDZqkmRFStmxA";
+// Constructor for tweetcard objects
+// function TweetCard(id, name, handle, profileImg, profileUrl, bodyText, likes, createdAt, retweetCount, tweetUrl) {
+//     this.id = id;
+//     this.name = name;
+//     this.handle = handle;
+//     this.profileImg = profileImg;
+//     this.profileUrl = profileUrl;
+//     this.bodyText = bodyText;
+//     this.likes = likes;
+//     this.createdAt = createdAt;
+//     this.retweeCount = retweetCount;
+//     this.tweetUrl = tweetUrl;
+//     this.favorited = null;
+//     this.addToFavorites = () => {
+//         log(this.favorited);
+//     }
+// }
 
 
 
