@@ -36,7 +36,7 @@ firebase.auth().getRedirectResult().then(function (result) {
 let provider = new firebase.auth.TwitterAuthProvider();
 
 firebase.auth().onAuthStateChanged(function (user) {
-    if (hGlobal.user) {
+    if (user) {
         // User is signed in
         hGlobal["displayName"] = user.displayName;
         hGlobal["photoURL"] = user.photoURL;
@@ -53,10 +53,10 @@ firebase.auth().onAuthStateChanged(function (user) {
         } else {
             // User doesn't exist, add them to the Firebase Users
             const userData = {
-                name: hGlobal.displayName,
-                photo: hGlobal.photoURL,
-                joined: firebase.database.ServerValue.TIMESTAMP,
-                lastLogin: firebase.database.ServerValue.TIMESTAMP
+                "name": hGlobal.displayName,
+                "photo": hGlobal.photoURL,
+                "joined": firebase.database.ServerValue.TIMESTAMP,
+                "lastLogin": firebase.database.ServerValue.TIMESTAMP
             }
             addUser(hGlobal.userId, userData);
         }
@@ -103,20 +103,20 @@ const addUser = (userId, userData) => {
 const favs = {
     addTweet(userId, tweet) {
         let fType = "Tweet";
-        let tweetId = $(tweet).attr("data-tweetId");
-        let tweetURL = $(tweetId).attr("href");
-        let tweetURL = tweet.attr$("href");
+        let tweetURL = $(tweet).attr("data-tweetURL");
 
         const fData = {
-            "url": tweetURL
+            "url": tweetURL,
+            "dateAdded": firebase.database.ServerValue.TIMESTAMP
         }
 
-        addFav(userId, fType, fData);
+        favs.addFav(userId, fType, fData);
     },
 
+    // Extra feature, this probably isn't going to make it into the MVP
     addTrend(userId, trend) {
         let fType = "Trend";
-        let trendInfo = trend; //fridgeMagnet.text($(this).attr("data-letter"));
+        let trendInfo = trend;
 
         const fData = {
             "name": $(trendInfo).attr("data-name"),
@@ -126,24 +126,27 @@ const favs = {
             "tweet_volume": $(trendInfo).attr("tweet_volume")
         }
 
-        addFav(userId, fType, fData);
+        favs.addFav(userId, fType, fData);
     },
 
     addFav(userId, fType, fData) {
-        db.ref(`/fav${fType}/${userId}`).set(favData, (error) => {
+        db.ref(`/fav${fType}/${userId}`).push(fData, (error) => {
             (error ? console.log("Errors handled " + error) : console.log("Favorite successfully added to the database. "));
         });
     },
 
     deleteFav() {
-
+        // Future option to delete favorites
     },
 
     getFavTweets() {
-        favs = db.ref(`/favTweet/${userId}`).once('value').then((ss) => {
-            let tweetURL = ss.val().url;
-            console.log("----url----", tweetURL)
+        let userId = hGlobal.userId;
+        let tweetLinks = [];
+        db.ref(`/favTweet/${userId}`).orderByChild("dateAdded").on("child_added", function (ss) {
+            let sv = ss.val();
+            tweetLinks.push(sv.url);
         });
+        return tweetLinks;
     }
 }
 
@@ -173,10 +176,11 @@ $(".uncheck").click(function () {
 
 
 
-let latestTweet = localStorage.latestTweet;
+// let latestTweet = localStorage.latestTweet;
 let queryTopic = "coding";
 let geocode = "";
-let radius = "30mi";
+let radius = "40mi";
+let searchtype = 'mixed';
 
 $('#search-button').click(function () {
     let searchString = $('#hawt-search').val().trim();
@@ -184,34 +188,62 @@ $('#search-button').click(function () {
     queryTopic = searchString.replace(/\s/g, '+');
     if (trend !== '') {
         $('.trends-links').append(`<li class="trend"><a class="trend-item" href="#" data-trend='${trend}'>#${trend}</a>
-                                <input type="checkbox" id="my-check">
-                                <button type="button" class="check"></button>
-                                <button type="button" class="uncheck"></button>
+                            
                             </li>`)
-        log('Trend', trend);
-        log(queryTopic);
-
     };
     $('#hawt-search').val('');
     $('.tweet-area').html('');
     getTweets();
 });
+
 $(document).on('click', '.trend-item', (event) => {
     event.preventDefault();
     queryTopic = event.target.text.replace(/\#/, '');
-    log('Searching For', queryTopic);
     $('.tweet-area').html('')
     getTweets();
+});
+$('#top').on('click', (event) => {
+    log(event);
+    $(document).ready(function () {
+        searchtype = 'popular';
+        getTweets();
+    });
 })
+$('#favorites').on('click', (event) => {
+    log(event);
+    window.setTimeout(() => {
+        let favTweets = favs.getFavTweets();
+        favTweets.forEach((el) => {
+            $('#favorite-area').html(`
+                <blockquote class="twitter-tweet" data-lang="en">
+                <button></button>
+                // <p lang="en"dir="ltr"></p>&mdash; 
+                
+                (@) <a id =""href=""> </a ></blockquote>
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                            <div>
+                                <button class ="btn btn-primary favThis" data-tweetURL="${el}">Fave it</button>
+                            </div>`);
+        })
+    }, 1000);
 
+});
+
+
+$('#latest').on('click', (event) => {
+    $(document).ready(function () {
+        searchtype = 'recent';
+        getTweets();
+    });
+})
 
 
 function getTweets() {
     // changes global variable geocode so any instance of 
     geocode = localStorage.geocode;
-    if (latestTweet == undefined) {
-        latestTweet = '';
-    }
+    // if (latestTweet == undefined) {
+    //     latestTweet = '';
+    // }
     $.ajax({
         url: 'https://gt-example-teets.herokuapp.com/twitter/api',
         method: 'POST',
@@ -219,16 +251,15 @@ function getTweets() {
             path: '/search/tweets',
             q: queryTopic,
             geocode: geocode.concat(radius),
-            since_id: latestTweet,
+            result_type: searchtype
         }
     })
         .then(function (data) {
-            console.log('Data: ', data);
             let tweets = data.statuses;
-            if (tweets.id > parseInt(latestTweet))// Keeps tweet query from being empty
-                localStorage.latestTweet = '';       /// if no new tweets have occured
-            tweets.forEach(function (el, index) {
-                log("element------------", el, 'Index', index)
+            // if (tweets.id > parseInt(latestTweet))// Keeps tweet query from being empty
+            //     localStorage.latestTweet = '';       /// if no new tweets have occured
+            tweets.forEach(function (el, ) {
+
                 let tweetID = el.id;
                 let username = el.user.name.trim();
                 let userId = el.user.id_str;
@@ -237,24 +268,24 @@ function getTweets() {
                 let text = el.text;
                 let embedUrl = 'https://twitter.com/' + userId + '/statuses/' + idString + '?ref_src=twsrc%5Etfw';
                 embedUrl = embedUrl.replace(' ', '');
-                log(embedUrl);
                 let tweetDate = el.created_at;
                 tweetDate = tweetDate.slice(0, 20);
-                $('.tweet-area').append(`<div>
+                $('.tweet-area').append(`
                 <blockquote class="twitter-tweet" data-lang="en">
                 <button></button>
                 // <p lang="en"dir="ltr"> ${ text}</p>&mdash; 
                 ${username} 
                 (@${screenname}) <a id ="${tweetID}"href="${embedUrl}"> ${tweetDate}</a ></blockquote>
-                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
-                            <button class ="btn btn-primary favThis" data-tweetId="${idString}"> Fave it <button>
-                            </div>`)
-                // stores newest tweet so new tweets
-                if (index > tweets.length - 2) {
-                    log(latestTweet);
-                    localStorage.latestTweet = idString;
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                            <div>
+                                <button class ="btn btn-primary favThis" data-tweetURL="${embedUrl}">Fave it</button>
+                            </div>`);
 
-                };
+                // if (index > tweets.length - 2) {
+                //     log(latestTweet);
+                //     localStorage.latestTweet = idString;
+
+                // };
 
             });
         }
@@ -263,33 +294,21 @@ function getTweets() {
 }
 
 
+// Set the event listener for the favorite button
+window.setTimeout(() => {   // It would be nice to do this with a promise so that when getTweets is done the listner is added. But this works.
+    $(".favThis").on("click", function () {
+        favs.addTweet(hGlobal.userId, this);
+    });
+}, 1000);
 
-$(".favThis").on("click", function () {
-    favs.addTweet(userId, this);
+
+
+
+$(".hawt-search").click(function () {
+    let searchstring = $(this).text("#search");
+    searchstring.focus(), trim(), replaceAll("+");
+    $("#searchBox").html($("input:search").val());
 });
-
-
-// let promise1 = new Promise((resolve, reject) => {
-//     if (getLocation())
-//         resolve('Data Available!');
-
-//     if (!getLocation())
-//         reject('Data Corrupted!');
-// });
-
-// promise1
-//     .then(() => { getTweets() })
-//     .catch(() => {
-//         console.log('Failed!')
-//     })
-
-
-
-
-
-
-//****** */ Geolocation
-// ******/Still  working on this
 
 
 
@@ -324,7 +343,7 @@ let getUserCurrentLocation = new Promise((resolve, reject) => {
 });
 getUserCurrentLocation
     .then(function (data) {
-        console.log('Data: ', data);
+
 
         TODO:
         localStorage.setItem('geocode', data.geocode);
@@ -334,14 +353,7 @@ getUserCurrentLocation
         console.log('error: ', error);
     })
 
-// // Yahoo WOEID for Atlanta for testing purposes
-// // let queryLocation = '2357024';
 
-// let tweetDataURL = 'https://api.twitter.com/1.1/search/tweets.json?q=' + trend + "&geocode=" + htmlGeo + radius;
-// // It is also possible to add a result type: Recent, Popular, Mixed   ex &result_type=recent  **mixed is default**
-
-// let yahooQueryURL = "https://yboss.yahooapis.com/geo/placefinder?location=" + htmlGeo;
-// let queryLocation = data.woeid.val();
 
 // Constructor for tweetcard objects
 // function TweetCard(id, name, handle, profileImg, profileUrl, bodyText, likes, createdAt, retweetCount, tweetUrl) {
@@ -360,8 +372,3 @@ getUserCurrentLocation
 //         log(this.favorited);
 //     }
 // }
-
-
-
-
-
