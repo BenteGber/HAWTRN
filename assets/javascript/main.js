@@ -254,6 +254,11 @@ $(document).ready(function () {
 });
 
 
+$(".hawt-search").click(function() {
+    let searchstring  = $(this).text("#search");
+    searchstring.focus(), trim(), replaceAll("+");
+    $("#searchBox").html($("input:search").val());
+  });
 
 
 
@@ -266,6 +271,56 @@ $(document).ready(function () {
 // var lat = '';
 // var long = '';
 
+<<<<<<< HEAD
+
+
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(function (position) {
+        lat = position.coords.latitude + "";
+        long = position.coords.longitude + "";
+        log(lat, long, "COORDINATES")
+        return true;
+    }, function (error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.")
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.")
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.")
+                break;
+        };
+        return false;
+    })
+
+}
+
+
+// Promise function for controlling state. 
+
+let promise1 = new Promise( (resolve, reject) => {
+    if (dataReceivedSuccessfully) 
+      resolve("Data Available!");
+    
+    if (!dataReceivedSuccessfully) 
+      reject("Data Corrupted!");
+    });
+
+    promise1.then(getTweets) 
+        console.log("Success!")
+
+    .catch(function(error) {
+        console.log("Failed!");
+}
+
+    
+
+=======
 // function getLocation() {
 //     navigator.geolocation.getCurrentPosition(function (position) {
 //         lat = position.coords.latitude + "";
@@ -291,6 +346,7 @@ $(document).ready(function () {
 //     })
 
 // // }
+>>>>>>> 391a41b035f07e7a2ca643467ec6253a63f9ccdd
 // let promise1 = new Promise((resolve, reject) => {
 //     if (dataReceivedSuccessfully)
 //         resolve('Data Available!');
