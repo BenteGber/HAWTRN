@@ -14,7 +14,7 @@
   margin-right: auto;
 }
 
-/* Foundation's Nav Bar non sticky */
+/* Foundation's Nav Bar */
 .menu-hover-lines {
 
   text-transform: uppercase;
@@ -31,7 +31,7 @@
 }
 
 .menu-hover-lines li:first-child a {
-  margin-left: 0;
+  margin-left: 1rem;
 }
 
 .menu-hover-lines li.active>a {
@@ -89,11 +89,12 @@
 }
 
 /* Our Nav Bar */
-.nav-bar {
+.top-bar {
   background-color: white;
   padding-top: .5%;
   padding-bottom: .5%;
   padding-left: 10%;
+  padding-right: 10%;
   -webkit-box-shadow: 0 8px 6px -6px #cdcdcd;
   -moz-box-shadow: 0 8px 6px -6px #cdcdcd;
   box-shadow: 0 8px 6px -6px #cdcdcd;
@@ -101,8 +102,8 @@
 
 
 #search-button {
-margin-left: 20%;
-background-color: #1DA1F2;
+  margin-left: 20%;
+  background-color: #1DA1F2;
   border: none;
   color: white;
   padding: 12px 20px;
@@ -111,6 +112,71 @@ background-color: #1DA1F2;
   display: inline-block;
   font-size: 12px;
   cursor: pointer;
+}
+
+@media screen and (max-width: 39.9375em) {
+  .top-bar {
+      padding-left: 3%;
+      padding-right: 0%;
+      padding-bottom: 2%;
+  }
+
+  .menu-hover-lines {
+
+      text-transform: uppercase;
+      font-weight: 500;
+      letter-spacing: 1px;
+      transition: all 0.35s ease;
+  }
+
+  .menu-hover-lines li a {
+      padding: 0.75rem 0;
+      color: rgba(10, 10, 10, 0.5);
+      position: relative;
+      margin-left: 1rem;
+  }
+
+  .menu-hover-lines li:first-child a {
+      margin-left: 1rem;
+  }
+
+  .menu-hover-lines li.active>a {
+      background-color: transparent;
+  }
+
+  .menu-hover-lines a:before,
+  .menu-hover-lines a::after {
+      height: 4px;
+      position: absolute;
+      content: '';
+      transition: all 0.35s ease;
+      background-color: transparent;
+      width: 0;
+  }
+
+  .menu-hover-lines a::before {
+      top: 0;
+      left: 0;
+  }
+
+  .menu-hover-lines a::after {
+      bottom: 0;
+      right: 0;
+  }
+
+  .menu-hover-lines a:hover,
+  .menu-hover-lines li.active>a {
+      color: #0a0a0a;
+      transition: all 0.35s ease;
+  }
+
+  .menu-hover-lines a:hover::before,
+  .menu-hover-lines .active a::before,
+  .menu-hover-lines a:hover::after,
+  .menu-hover-lines .active a::after {
+      width: 100%;
+  }
+
 }
 
 /* Trends Near You */
@@ -193,6 +259,18 @@ background-color: #1DA1F2;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 10pt;
   color: #fa5036;
+}
+
+.favThis {
+  background-color: #1DA1F2;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: pointer;
 }
 
 /*Twitter Embedding */
