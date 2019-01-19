@@ -268,9 +268,6 @@ $(".hawt-search").click(function() {
 // var lat = '';
 // var long = '';
 
-<<<<<<< HEAD
-
-
 function getLocation() {
     navigator.geolocation.getCurrentPosition(function (position) {
         lat = position.coords.latitude + "";
@@ -315,9 +312,6 @@ let promise1 = new Promise( (resolve, reject) => {
         console.log("Failed!");
 }
 
-    
-
-=======
 // function getLocation() {
 //     navigator.geolocation.getCurrentPosition(function (position) {
 //         lat = position.coords.latitude + "";
@@ -343,7 +337,7 @@ let promise1 = new Promise( (resolve, reject) => {
 //     })
 
 // // }
->>>>>>> 391a41b035f07e7a2ca643467ec6253a63f9ccdd
+
 // let promise1 = new Promise((resolve, reject) => {
 //     if (dataReceivedSuccessfully)
 //         resolve('Data Available!');
@@ -386,8 +380,3 @@ let promise1 = new Promise( (resolve, reject) => {
 //         log(this.favorited);
 //     }
 // }
-
-
-
-
-
