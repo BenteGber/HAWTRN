@@ -212,6 +212,7 @@ $('#top').on('click', (event) => {
 $('#favorites').on('click', (event) => {
     log(event);
     window.setTimeout(() => {
+        $('#favorite-area').innerHTML('');
         let favTweets = favs.getFavTweets();
         favTweets.forEach((el) => {
             $('#favorite-area').html(`
@@ -219,7 +220,7 @@ $('#favorites').on('click', (event) => {
                 <button></button>
                 // <p lang="en"dir="ltr"></p>&mdash; 
                 
-                (@) <a id =""href=""> </a ></blockquote>
+                (@) <a id =""href="${el}"> </a ></blockquote>
                             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                             <div>
                                 <button class ="btn btn-primary favThis" data-tweetURL="${el}">Fave it</button>
