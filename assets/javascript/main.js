@@ -297,7 +297,7 @@ function getTweets() {
 
 // Set the event listener for the favorite button
 window.setTimeout(() => {   // It would be nice to do this with a promise so that when getTweets is done the listner is added. But this works.
-    $(".favThis").on("click", function () {
+    $(document).on("click", ".favThis", function () {
         favs.addTweet(hGlobal.userId, this);
     });
 }, 1000);
