@@ -176,7 +176,33 @@ $(".uncheck").click(function () {
 let latestTweet = localStorage.latestTweet;
 let queryTopic = "coding";
 let geocode = "";
-let radius = "20mi"
+let radius = "30mi";
+
+$('#search-button').click(function () {
+    let searchString = $('#hawt-search').val().trim();
+    let trend = searchString.replace(/\s/g, '');
+    queryTopic = searchString.replace(/\s/g, '+');
+    if (trend !== '') {
+        $('.trends-links').append(`<li class="trend"><a class="trend-item" href="#" data-trend='${trend}'>#${trend}</a>
+                                <input type="checkbox" id="my-check">
+                                <button type="button" class="check"></button>
+                                <button type="button" class="uncheck"></button>
+                            </li>`)
+        log('Trend', trend);
+        log(queryTopic);
+
+    };
+    $('#hawt-search').val('');
+    $('.tweet-area').html('');
+    getTweets();
+});
+$(document).on('click', '.trend-item', (event) => {
+    event.preventDefault();
+    queryTopic = event.target.text.replace(/\#/, '');
+    log('Searching For', queryTopic);
+    $('.tweet-area').html('')
+    getTweets();
+})
 
 
 
