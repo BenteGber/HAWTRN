@@ -3,7 +3,6 @@ const log = console.log;
 
 // Firebase Configuration
 
-
 const configFireBase = {
     apiKey: "AIzaSyCDxL0zvea3jzl8N1lk9mPbahQ4Dlj0Aa4",
     authDomain: "hawtrn-85a35.firebaseapp.com",
@@ -176,9 +175,14 @@ $(".uncheck").click(function () {
 
 let latestTweet = localStorage.latestTweet;
 let queryTopic = "coding";
-let geocode = '37.781157,-122.398720,50mi';
+let geocode = "";
+let radius = "20mi"
+
+
 
 function getTweets() {
+    // changes global variable geocode so any instance of 
+    geocode = localStorage.geocode;
     if (latestTweet == undefined) {
         latestTweet = '';
     }
@@ -188,17 +192,15 @@ function getTweets() {
         data: {
             path: '/search/tweets',
             q: queryTopic,
-            geocode: geocode,
+            geocode: geocode.concat(radius),
             since_id: latestTweet,
-
         }
     })
         .then(function (data) {
             console.log('Data: ', data);
             let tweets = data.statuses;
-            if (tweets.id > parseInt(latestTweet))
-                localStorage.latestTweet = '';
-            log("$##$#$#$#$#$#$#$#$", tweets.length);
+            if (tweets.id > parseInt(latestTweet))// Keeps tweet query from being empty
+                localStorage.latestTweet = '';       /// if no new tweets have occured
             tweets.forEach(function (el, index) {
                 log("element------------", el, 'Index', index)
                 let tweetID = el.id;
@@ -221,6 +223,7 @@ function getTweets() {
                             <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
                             <button class ="btn btn-primary favThis" data-tweetId="${idString}"> Fave it <button>
                             </div>`)
+                // stores newest tweet so new tweets
                 if (index > tweets.length - 2) {
                     log(latestTweet);
                     localStorage.latestTweet = idString;
@@ -232,9 +235,7 @@ function getTweets() {
         )
 
 }
-$(document).ready(function () {
-    getTweets();
-});
+
 
 
 $(".favThis").on("click", function () {
@@ -242,6 +243,19 @@ $(".favThis").on("click", function () {
 });
 
 
+// let promise1 = new Promise((resolve, reject) => {
+//     if (getLocation())
+//         resolve('Data Available!');
+
+//     if (!getLocation())
+//         reject('Data Corrupted!');
+// });
+
+// promise1
+//     .then(() => { getTweets() })
+//     .catch(() => {
+//         console.log('Failed!')
+//     })
 
 
 
@@ -250,50 +264,49 @@ $(".favThis").on("click", function () {
 
 //****** */ Geolocation
 // ******/Still  working on this
-// let hasLocation = getLocation()
-// var lat = '';
-// var long = '';
 
-// function getLocation() {
-//     navigator.geolocation.getCurrentPosition(function (position) {
-//         lat = position.coords.latitude + "";
-//         long = position.coords.longitude + "";
-//         log(lat, long, "COORDINATES")
-//         return true;
-//     }, function (error) {
-//         switch (error.code) {
-//             case error.PERMISSION_DENIED:
-//                 alert("User denied the request for Geolocation.");
-//                 break;
-//             case error.POSITION_UNAVAILABLE:
-//                 alert("Location information is unavailable.")
-//                 break;
-//             case error.TIMEOUT:
-//                 alert("The request to get user location timed out.")
-//                 break;
-//             case error.UNKNOWN_ERROR:
-//                 alert("An unknown error occurred.")
-//                 break;
-//         };
-//         return false;
-//     })
 
-// // }
-// let promise1 = new Promise((resolve, reject) => {
-//     if (dataReceivedSuccessfully)
-//         resolve('Data Available!');
 
-//     if (!dataReceivedSuccessfully)
-//         reject('Data Corrupted!');
-// });
 
-// promise1
-//     .then(getTweets)
-// console.log('Success!')
+let getUserCurrentLocation = new Promise((resolve, reject) => {
+    //Location function
+    navigator.geolocation.getCurrentPosition(function (position) {
+        const lat = position.coords.latitude + "";
+        const long = position.coords.longitude + "";
+        const geocode = lat.concat(',', long, ',', radius);
+        resolve({
+            lat,
+            long,
+            geocode
+        });
+    }, function (error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                reject("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                reject("Location information is unavailable.")
+                break;
+            case error.TIMEOUT:
+                reject("The request to get user location timed out.")
+                break;
+            case error.UNKNOWN_ERROR:
+                reject("An unknown error occurred.")
+                break;
+        };
+    })
+});
+getUserCurrentLocation
+    .then(function (data) {
+        console.log('Data: ', data);
 
-//     .catch(function (error) {
-//         console.log('Failed!');
-//     }
+        TODO:
+        localStorage.setItem('geocode', data.geocode);
+        getTweets() //pass data to the getTweets function in order to get the coordination
+    })
+    .catch(function (error) {
+        console.log('error: ', error);
+    })
 
 // // Yahoo WOEID for Atlanta for testing purposes
 // // let queryLocation = '2357024';
